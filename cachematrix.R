@@ -1,46 +1,39 @@
-## Two functions designed to make an invertable matrix and to save the inverse in the 
-## parent environment so that computation time to compute the inverse on subsequent calls.
 
-## makeCacheMatrix creates a square matrix and provides subfunctions that allow its values to be 
-## set and retrieved in a parent environment
+# This function takes user input for a matrix X and calculates its inverse.  The values of X and its inverse are returned to the global environment.
 
 makeCacheMatrix <- function(x = matrix()) {
-  amatrix <-matrix() ## creates an empty matrix as a reference for within the function
+  anInversematrix <-matrix() ## creates an empty matrix as a reference for within the function
 
-##  The set function takes external values for y and converts a vector into the matrix z.  Z has dimension 
-#   such that if y is a vector of length n^2, there are n rows and n columns of z.
-#   x is the z-matrix super assigned to the parent environment so that x is available was the function
-#   stack is popped off.  aMatrix is a square matrix of NA values sent to the parent environment.  It is filled later.
-  set <- function(y){
+# allows the user to set the values for a variable y.  The y-values are then transfered to a square matrix.  A default inverse Matrix is also calculated.   
+set < function(y){
       z <- matrix(y,sqrt(length(y)), sqrt(length(y)))  
       x<<-z
-      aMatrix <<- matrix(NA, sqrt(length(y)), sqrt(length(y))) 
+      anInverseMatrix <<- matrix(NA, sqrt(length(y)), sqrt(length(y))) 
   }
-# The get function is called outside the function.  It alows the user to get the matrix values super assigned 
-#  to x
-get <- function() x
-setMatrix <- function(solve) aMatrix <<-solve  # takes the value for aMatrix.  
-                                                      #  Then super assigns it to be called outside the makecacheMatrix function
 
-getMatrix <- function() aMatrix ## a reference to aMatrix so it can be returned in the list below
+get <- function() x # takes the value from set and super assigns it for reference in other environments
+setInverseMatrix <- function(solve) anInversematrix <<-solve(x)  # uses the get() value of x and solves for (sets) its inverse.
 
-list(set = set, get = get, setMatrix = setMatrix, getMatrix = getMatrix) # returns a list that is the final output of the makeCache Matrix function.  
-                                                                         # the list is returned to the global environment.  
+getInverseMatrix <- function() anInversematrix ## returns the inverse of X determined in the setMatrix function.
+
+# returns a list that is the final output of the makeCache Matrix function. The return makes these functions available in the global env. 
+list(set = set, get = get, setInverseMatrix = setInverseMatrix, getInverseMatrix = getInverseMatrix)   
 }
 
 
 ## The cacheSOlve takes the information available from the makeCacheMatrix function in order to return the inverse 
-## of aMatrix.
+## of matrix X through an assignment to a variable.  z <-cacheSolve() assingns the inverse of matrix X in the variable z.
 
 cacheSolve <- function(x, ...) {
         
-  aMatrix <- x$getMatrix()  #retrieves the value of aMatrix from the getMatrix function in the previous command
-   if(!is.na(aMatrix[1,1])){
+  anInverseMatrix <- x$getInverseMatrix()  #retrieves the value of anInverseMatrix from the getInverseMatrix function in makeCacheMatrix()
+  # checks that the inverseMatrix function is not returning the default matrix created in makeCacheMatrix() indicates that it is not and returns the inverse, 
+  if(!is.na(anInverseMatrix[1,1])){
      print("It looks like this program is going to work!")
-     return(aMatrix)
+     return(anInverseMatrix)
    }
-  aMatrix <- x$get() # retrieves the value of matrix x in the makeCacheMatrix function
-  inverseOfAMatrix <-solve(aMatrix, ...) # solves for the inverse of aMatrix from the cacheSolve function.
-  inverseOfAMatrix # returns the value of the solution for inverse of aMatrix
+  anInverseMatrix <- x$getInverseMatrix() # retrieves the value of the inverse matrix of x in the makeCacheMatrix function
+  inverseOfAMatrix <-solve(anInverseMatrix, ...) # solves for the inverse of aMatrix from the cacheSolve function.
+  inverseOfAMatrix # returns the value of the solution for inverse of Matrix X
   
 }
